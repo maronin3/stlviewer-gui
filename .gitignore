@@ -1,2 +1,3 @@
-build
-node_moudule
+dist
+node_modules/
+.log
