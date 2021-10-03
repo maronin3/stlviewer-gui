@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fiber/server"
 	"fiber/utils"
-	"fmt"
+	"fiber/webview"
 )
 
 func main() {
 	utils.Init()
-	fmt.Println(utils.Env.Test)
-	// go server.Server()
-	// webview.Webview()
+	go server.Server()
+	webview.Webview()
 }
