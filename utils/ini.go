@@ -9,14 +9,15 @@ import (
 
 // Default Config
 type Config struct {
-	Test string `default:"hello"`
+	Width  int `default:"800"`
+	Height int `default:"600"`
 }
 
 var Env Config
 
 // InItialize
 func Init() {
-	dirpath := "/home/s-kim/dev/Template/golang/fiber"
+	dirpath := "/mnt/e/Dev/Projects/STLViewer/stlviewer-onpremiss"
 	// dirpath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	// if err != nil {
 	// 	log.Fatal(err)
@@ -27,10 +28,13 @@ func Init() {
 		log.Println(err)
 	}
 
-	cfg.Section("Test").Key("VALUE").SetValue("world")
+	// cfg.Section("Test").Key("VALUE").SetValue("world")
+	// cfg.Section("WebView").Key("Heigh").Int()
+	// result, _ :=cfg.Section("WebView").Key("Width").Int()
 
 	Env = Config{
-		Test: cfg.Section("Test").Key("VALUE").String(),
+		Width:  800,
+		Height: 600,
 	}
 
 	cfg.SaveTo(fmt.Sprintf("%v/server.ini", dirpath))
