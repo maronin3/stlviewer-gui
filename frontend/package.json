@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "scripts": {
     "serve": "npx webpack-dev-server",
