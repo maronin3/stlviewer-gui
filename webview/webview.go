@@ -2,21 +2,29 @@ package webview
 
 import (
 	"fiber/utils"
+	"log"
 
 	"github.com/webview/webview"
 )
 
-var (
-	width  = utils.Env.Width
-	height = utils.Env.Height
-)
-
 func Webview() {
-	debug := true
-	w := webview.New(debug)
+	// Debug
+	w := webview.New(utils.Env.DevMode)
 	defer w.Destroy()
-	w.SetTitle("Minimal webview example")
-	w.SetSize(width, height, webview.HintNone)
-	w.Navigate("http://localhost:3000")
+
+	// Setting
+	w.SetTitle(utils.Env.Title)
+	w.SetSize(utils.Env.Width, utils.Env.Height, webview.HintNone)
+
+	// Binding
+	w.Bind("quit", func() {
+		w.Terminate()
+	})
+
+	w.Bind("test", func() {
+		log.Println("test")
+	})
+
+	w.Navigate(utils.Env.URL)
 	w.Run()
 }
