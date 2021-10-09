@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fiber/utils"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -17,21 +19,22 @@ import (
 func Server() {
 	app := fiber.New()
 
-	//logger
-	file, err := os.OpenFile("./server.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
+	if utils.Env.DevMode {
+		//logger
+		file, err := os.OpenFile(fmt.Sprintf("%v/server.log", utils.DirPath), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		}
+		defer file.Close()
+		app.Use(logger.New(logger.Config{
+			Next:         nil,
+			Format:       "[${time}] ${status} - ${latency} ${method} ${path}\n",
+			TimeFormat:   "15:04:05",
+			TimeZone:     "Local",
+			TimeInterval: 500 * time.Millisecond,
+			Output:       file,
+		}))
 	}
-	defer file.Close()
-
-	app.Use(logger.New(logger.Config{
-		Next:         nil,
-		Format:       "[${time}] ${status} - ${latency} ${method} ${path}\n",
-		TimeFormat:   "15:04:05",
-		TimeZone:     "Local",
-		TimeInterval: 500 * time.Millisecond,
-		Output:       file,
-	}))
 
 	// monitor
 	app.Get("/dashboard", monitor.New())
@@ -43,12 +46,12 @@ func Server() {
 	app.Use(pprof.New())
 
 	app.Use(filesystem.New(filesystem.Config{
-		Root:         http.Dir("./dist"),
+		Root:         http.Dir(fmt.Sprintf("%v/dist", utils.DirPath)),
 		Browse:       true,
 		Index:        "index.html",
 		NotFoundFile: "404.html",
 		MaxAge:       3600,
 	}))
 
-	app.Listen("127.0.0.1:3000")
+	app.Listen(fmt.Sprintf("%v:%v", utils.Env.IP, utils.Env.Port))
 }
